@@ -44,8 +44,11 @@ export const CapabilitiesSection: React.FC<CapabilitiesSectionProps> = ({ naviga
             </span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-semibold text-white tracking-[-0.02em]">
-            Built end to end, in the dark
+            Everything you need to build, launch, and scale
           </h2>
+          <p className="text-white/60 text-base sm:text-lg max-w-2xl mt-3 leading-relaxed">
+            Full-spectrum digital services engineered from strategy and interface design to production-grade deployment.
+          </p>
         </div>
 
         {/* Capabilities Rows with Animated Electric Blue Line */}

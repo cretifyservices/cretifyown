@@ -76,7 +76,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     },
   ];
 
-  const heroHeadlineWords = ['CRAFT', 'THE', 'FUTURE', 'OF', 'BRANDS'];
+  const heroHeadlineWords = ['We', 'Make', 'Ideas', 'Impossible', 'to', 'Ignore'];
 
   return (
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
@@ -88,10 +88,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         <StarryCosmicCanvas density={90} interactive={true} className="opacity-90" />
 
         {/* Ambient Cosmic Radial Glows */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-[rgb(99,142,255)]/10 blur-[140px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-[280px] sm:w-[450px] h-[280px] sm:h-[450px] bg-[rgb(120,80,240)]/8 blur-[150px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-[rgb(99,142,255)]/12 blur-[140px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[280px] sm:w-[450px] h-[280px] sm:h-[450px] bg-[rgb(120,80,240)]/10 blur-[150px] rounded-full pointer-events-none" />
 
-        {/* The Exact Vertical Chrome/Obsidian Stone Animation (Centered in background behind text as in Vesper reference) */}
+        {/* The Exact Vertical Chrome/Obsidian Stone Animation (Centered behind text) */}
         <div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 transition-all duration-1000 ease-out"
           style={{
@@ -101,18 +101,18 @@ export const HomePage: React.FC<HomePageProps> = ({
           }}
         >
           <div className="block sm:hidden">
-            <VerticalStone customScale={0.72} />
+            <VerticalStone customScale={0.78} />
           </div>
           <div className="hidden sm:block md:hidden">
-            <VerticalStone customScale={0.88} />
+            <VerticalStone customScale={0.92} />
           </div>
           <div className="hidden md:block">
-            <VerticalStone customScale={1.05} />
+            <VerticalStone customScale={1.08} />
           </div>
         </div>
 
-        {/* Hero Central Content (z-10 overlaid on top of vertical stone) */}
-        <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center gap-7 sm:gap-9">
+        {/* Hero Central Content */}
+        <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center gap-6 sm:gap-8">
           
           {/* Eyebrow Pill */}
           <div
@@ -130,7 +130,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           {/* Calibrated Harmonic Headline */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-semibold tracking-[-0.025em] leading-[1.08] sm:leading-[1.04] text-white flex flex-wrap justify-center gap-x-3 sm:gap-x-4 gap-y-1 select-none max-w-4xl">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-semibold tracking-[-0.025em] leading-[1.12] sm:leading-[1.08] text-white flex flex-wrap justify-center gap-x-2.5 sm:gap-x-3.5 gap-y-1 select-none max-w-3xl">
             {heroHeadlineWords.map((word, i) => (
               <span
                 key={i}

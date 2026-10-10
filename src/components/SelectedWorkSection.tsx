@@ -56,7 +56,7 @@ export const SelectedWorkSection: React.FC<SelectedWorkSectionProps> = ({ naviga
               </span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-semibold text-white tracking-[-0.02em]">
-              Recent transmissions
+              Featured live builds & digital systems
             </h2>
           </div>
           <p className="text-[15px] text-white/50 max-w-sm md:text-right font-normal">

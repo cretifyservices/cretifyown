@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CretifyLogo } from './CretifyLogo';
-import { SERVICES_DATA } from '../data/servicesData';
-import { ChevronDown, ArrowUpRight } from 'lucide-react';
+import { useServices } from '../utils/dataStore';
+import { ChevronDown, ArrowUpRight, X, Menu } from 'lucide-react';
 
 interface NavbarProps {
   currentPath: string;
@@ -17,17 +17,21 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [scrolled, setScrolled] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(true);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const services = useServices();
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll cleanly when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
     } else {
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     }
     return () => {
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     };
   }, [mobileMenuOpen]);
 
@@ -35,7 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -55,170 +59,190 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[#0A0A0B]/85 backdrop-blur-md border-b border-white/[0.08] py-3.5 shadow-[0_4px_30px_rgba(0,0,0,0.8)]'
-          : 'bg-[#0A0A0B]/60 backdrop-blur-md border-b border-white/[0.07] py-4'
-      }`}
-      style={{
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between">
-          
-          {/* Logo */}
-          <button
-            onClick={() => handleNavClick('/')}
-            className="flex items-center focus:outline-none group cursor-pointer text-left"
-            aria-label="Cretify Home"
-          >
-            <CretifyLogo size="md" />
-          </button>
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+          scrolled
+            ? 'bg-[#0A0A0B]/90 backdrop-blur-md border-b border-white/[0.08] py-3.5 shadow-[0_4px_30px_rgba(0,0,0,0.8)]'
+            : 'bg-[#0A0A0B]/60 backdrop-blur-md border-b border-white/[0.07] py-4'
+        }`}
+        style={{
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <button
+              onClick={() => handleNavClick('/')}
+              className="flex items-center focus:outline-none group cursor-pointer text-left"
+              aria-label="Cretify Home"
+            >
+              <CretifyLogo size="md" />
+            </button>
 
-          {/* Desktop Links (Vesper format: Work, About, Services, Process, Contact) */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => {
-              const isActive =
-                link.path === '/'
-                  ? currentPath === '/'
-                  : currentPath.startsWith(link.path);
+            {/* Desktop Links */}
+            <nav className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => {
+                const isActive =
+                  link.path === '/'
+                    ? currentPath === '/'
+                    : currentPath.startsWith(link.path);
 
-              if (link.hasDropdown) {
-                return (
-                  <div
-                    key={link.path}
-                    className="relative"
-                    onMouseEnter={() => setServicesDropdownOpen(true)}
-                    onMouseLeave={() => setServicesDropdownOpen(false)}
-                  >
-                    <button
-                      onClick={() => handleNavClick('/services')}
-                      className={`flex items-center gap-1.5 text-[13px] font-medium tracking-[0.1em] uppercase transition-colors duration-200 cursor-pointer ${
-                        isActive
-                          ? 'text-white'
-                          : 'text-white/60 hover:text-white'
-                      }`}
+                if (link.hasDropdown) {
+                  return (
+                    <div
+                      key={link.path}
+                      className="relative"
+                      onMouseEnter={() => setServicesDropdownOpen(true)}
+                      onMouseLeave={() => setServicesDropdownOpen(false)}
                     >
-                      <span>{link.label}</span>
-                      <ChevronDown
-                        className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                          servicesDropdownOpen ? 'rotate-180 text-[rgb(99,142,255)]' : 'text-white/40'
+                      <button
+                        onClick={() => handleNavClick('/services')}
+                        className={`flex items-center gap-1.5 text-[13px] font-medium tracking-[0.1em] uppercase transition-colors duration-200 cursor-pointer ${
+                          isActive
+                            ? 'text-white'
+                            : 'text-white/60 hover:text-white'
                         }`}
-                      />
-                    </button>
+                      >
+                        <span>{link.label}</span>
+                        <ChevronDown
+                          className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                            servicesDropdownOpen
+                              ? 'rotate-180 text-[rgb(99,142,255)]'
+                              : 'text-white/40'
+                          }`}
+                        />
+                      </button>
 
-                    {/* Vesper-styled Services Flyout */}
-                    {servicesDropdownOpen && (
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[460px] bg-[#0A0A0B]/98 border border-white/10 rounded-2xl p-4 shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl grid grid-cols-2 gap-2 animate-in fade-in duration-200">
-                        <div className="col-span-2 pb-2 mb-1 border-b border-white/[0.08] flex items-center justify-between px-2">
-                          <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/50">
-                            Disciplines
-                          </span>
-                          <button
-                            onClick={() => handleNavClick('/services')}
-                            className="text-[11px] text-[rgb(99,142,255)] hover:underline flex items-center gap-1"
-                          >
-                            <span>All Capabilities</span>
-                            <ArrowUpRight className="w-3 h-3" />
-                          </button>
-                        </div>
-                        {SERVICES_DATA.map((srv, idx) => (
-                          <button
-                            key={srv.slug}
-                            onClick={() => handleNavClick(`/services/${srv.slug}`)}
-                            className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-white/5 text-left transition-colors group cursor-pointer"
-                          >
-                            <span className="text-[11px] font-mono text-[rgb(99,142,255)] shrink-0 pt-0.5">
-                              0{idx + 1}
+                      {/* Desktop Services Flyout */}
+                      {servicesDropdownOpen && (
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[460px] bg-[#0A0A0B]/98 border border-white/10 rounded-2xl p-4 shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl grid grid-cols-2 gap-2 animate-in fade-in duration-200">
+                          <div className="col-span-2 pb-2 mb-1 border-b border-white/[0.08] flex items-center justify-between px-2">
+                            <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-white/50">
+                              Disciplines
                             </span>
-                            <div>
-                              <p className="text-xs font-medium text-white group-hover:text-[rgb(99,142,255)] transition-colors leading-snug">
-                                {srv.title}
-                              </p>
-                              <p className="text-[10px] text-white/40 line-clamp-1 mt-0.5">
-                                {srv.tagline}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                            <button
+                              onClick={() => handleNavClick('/services')}
+                              className="text-[11px] text-[rgb(99,142,255)] hover:underline flex items-center gap-1 cursor-pointer"
+                            >
+                              <span>All Capabilities</span>
+                              <ArrowUpRight className="w-3 h-3" />
+                            </button>
+                          </div>
+                          {services.map((srv, idx) => (
+                            <button
+                              key={srv.slug}
+                              onClick={() => handleNavClick(`/services/${srv.slug}`)}
+                              className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-white/5 text-left transition-colors group cursor-pointer"
+                            >
+                              <span className="text-[11px] font-mono text-[rgb(99,142,255)] shrink-0 pt-0.5">
+                                0{idx + 1}
+                              </span>
+                              <div>
+                                <p className="text-xs font-medium text-white group-hover:text-[rgb(99,142,255)] transition-colors leading-snug">
+                                  {srv.title}
+                                </p>
+                                <p className="text-[10px] text-white/40 line-clamp-1 mt-0.5">
+                                  {srv.tagline}
+                                </p>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    key={link.path}
+                    onClick={() => handleNavClick(link.path)}
+                    className={`text-[13px] font-medium tracking-[0.1em] uppercase transition-colors duration-200 cursor-pointer ${
+                      isActive
+                        ? 'text-white'
+                        : 'text-white/60 hover:text-white'
+                    }`}
+                  >
+                    {link.label}
+                  </button>
                 );
-              }
+              })}
+            </nav>
 
-              return (
-                <button
-                  key={link.path}
-                  onClick={() => handleNavClick(link.path)}
-                  className={`text-[13px] font-medium tracking-[0.1em] uppercase transition-colors duration-200 cursor-pointer ${
-                    isActive
-                      ? 'text-white'
-                      : 'text-white/60 hover:text-white'
-                  }`}
-                >
-                  {link.label}
-                </button>
-              );
-            })}
-          </nav>
+            {/* Desktop Right Action: Start a Project Button */}
+            <div className="hidden md:flex items-center gap-4">
+              <button
+                onClick={() =>
+                  onOpenProjectModal ? onOpenProjectModal() : handleNavClick('/contact')
+                }
+                className="relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-white/20 bg-white/[0.04] hover:bg-white/[0.08] hover:border-[rgb(99,142,255)]/70 text-white text-[12px] font-medium tracking-[0.12em] uppercase transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.03)] hover:shadow-[0_0_25px_rgba(99,142,255,0.35)] cursor-pointer group active:scale-[0.98]"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[rgb(99,142,255)] shadow-[0_0_8px_rgb(99,142,255)]" />
+                <span>Start a Project</span>
+              </button>
+            </div>
 
-          {/* Right Action: Designeous Button */}
-          <div className="hidden md:flex items-center gap-4">
-            <button
-              onClick={() => onOpenProjectModal ? onOpenProjectModal() : handleNavClick('/contact')}
-              className="relative inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-white/20 bg-white/[0.04] hover:bg-white/[0.08] hover:border-[rgb(99,142,255)]/70 text-white text-[12px] font-medium tracking-[0.12em] uppercase transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.03)] hover:shadow-[0_0_25px_rgba(99,142,255,0.35)] cursor-pointer group active:scale-[0.98]"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[rgb(99,142,255)] shadow-[0_0_8px_rgb(99,142,255)]" />
-              <span>Start a Project</span>
-            </button>
-          </div>
-
-          {/* Mobile Designeous Menu Button */}
-          <div className="flex md:hidden items-center gap-3">
-            <button
-              onClick={() => handleNavClick('/contact')}
-              className="px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.1em] rounded-full border border-white/20 bg-white/[0.04] text-white"
-            >
-              Start
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="relative p-2.5 rounded-xl border border-white/15 bg-white/[0.04] text-white hover:border-[rgb(99,142,255)]/60 transition-colors cursor-pointer flex flex-col justify-center items-center gap-1.5 w-10 h-10"
-              aria-label="Toggle navigation menu"
-            >
-              <span
-                className={`w-4 h-[1.5px] bg-white transition-all duration-200 ${
-                  mobileMenuOpen ? 'rotate-45 translate-y-[3.5px]' : ''
-                }`}
-              />
-              <span
-                className={`w-4 h-[1.5px] bg-white transition-all duration-200 ${
-                  mobileMenuOpen ? '-rotate-45 -translate-y-[3.5px]' : ''
-                }`}
-              />
-            </button>
+            {/* Mobile Header Buttons */}
+            <div className="flex md:hidden items-center gap-2.5">
+              <button
+                onClick={() => handleNavClick('/contact')}
+                className="px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.1em] rounded-full border border-white/20 bg-white/[0.04] text-white cursor-pointer active:scale-95"
+              >
+                Start
+              </button>
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="relative p-2.5 rounded-xl border border-white/15 bg-white/[0.04] text-white hover:border-[rgb(99,142,255)]/60 transition-colors cursor-pointer flex justify-center items-center w-10 h-10 active:scale-95"
+                aria-label="Open mobile menu"
+              >
+                <Menu className="w-5 h-5 text-white" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Drawer / Full Screen Menu */}
+      {/* FULL-SCREEN MOBILE DRAWER OVERLAY (Rendered outside header to guarantee full height & no clipping) */}
       {mobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-x-0 top-[60px] sm:top-[68px] bottom-0 z-50 bg-[#0A0A0B]/98 backdrop-blur-3xl border-t border-white/10 flex flex-col justify-between overflow-y-auto overscroll-contain animate-in fade-in duration-200"
-          style={{ height: 'calc(100dvh - 60px)' }}
+          className="md:hidden fixed inset-0 z-[100] bg-[#0A0A0B] flex flex-col w-full h-[100dvh] overflow-hidden animate-in fade-in duration-200"
+          style={{ touchAction: 'auto' }}
         >
-          <div className="p-6 sm:p-8 flex flex-col gap-5">
+          {/* Top Bar inside overlay with Logo and Close 'X' Button */}
+          <div className="flex items-center justify-between px-5 sm:px-8 py-4 border-b border-white/[0.08] bg-[#0A0A0B]/95 shrink-0">
+            <button
+              onClick={() => handleNavClick('/')}
+              className="flex items-center text-left"
+              aria-label="Cretify Home"
+            >
+              <CretifyLogo size="md" />
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 rounded-xl border border-white/20 bg-white/[0.05] text-white hover:border-[rgb(99,142,255)] transition-colors cursor-pointer flex items-center justify-center w-10 h-10 active:scale-95"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          {/* Scrollable Menu Items Container - Smooth scrolling & guaranteed full visibility */}
+          <div
+            className="flex-1 overflow-y-auto overscroll-contain px-6 py-6 pb-20 space-y-4"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
             {navLinks.map((link) => (
-              <div key={link.path}>
-                <div className="flex items-center justify-between border-b border-white/[0.08]">
+              <div key={link.path} className="border-b border-white/[0.08] pb-3">
+                <div className="flex items-center justify-between">
                   <button
                     onClick={() => handleNavClick(link.path)}
-                    className={`flex-1 text-left py-2.5 text-xl font-medium uppercase tracking-[0.12em] cursor-pointer transition-colors ${
-                      currentPath === link.path ? 'text-[rgb(99,142,255)]' : 'text-white/90 hover:text-white'
+                    className={`flex-1 text-left py-2 text-xl font-medium uppercase tracking-[0.12em] cursor-pointer transition-colors ${
+                      currentPath === link.path
+                        ? 'text-[rgb(99,142,255)] font-semibold'
+                        : 'text-white/90 hover:text-white'
                     }`}
                   >
                     {link.label}
@@ -229,31 +253,38 @@ export const Navbar: React.FC<NavbarProps> = ({
                         e.stopPropagation();
                         setMobileServicesOpen(!mobileServicesOpen);
                       }}
-                      className="p-3 text-white/50 hover:text-white transition-colors cursor-pointer"
+                      className="p-2.5 text-white/60 hover:text-white transition-colors cursor-pointer"
                       aria-label="Toggle services list"
                     >
                       <ChevronDown
                         className={`w-5 h-5 transition-transform duration-200 ${
-                          mobileServicesOpen ? 'rotate-180 text-[rgb(99,142,255)]' : 'text-white/40'
+                          mobileServicesOpen
+                            ? 'rotate-180 text-[rgb(99,142,255)]'
+                            : 'text-white/40'
                         }`}
                       />
                     </button>
                   )}
                 </div>
 
+                {/* Mobile Collapsible Services List */}
                 {link.hasDropdown && mobileServicesOpen && (
-                  <div className="pl-3 py-2.5 space-y-2 border-l-2 border-white/10 my-2">
-                    {SERVICES_DATA.map((srv, idx) => (
+                  <div className="pl-3 py-2 space-y-1.5 border-l-2 border-[rgb(99,142,255)]/40 my-2">
+                    {services.map((srv, idx) => (
                       <button
                         key={srv.slug}
                         onClick={() => handleNavClick(`/services/${srv.slug}`)}
-                        className="w-full text-left py-1.5 px-2 rounded-lg hover:bg-white/5 text-xs text-white/60 hover:text-white flex items-center justify-between cursor-pointer transition-colors"
+                        className="w-full text-left py-2 px-2.5 rounded-lg hover:bg-white/5 text-xs text-white/70 hover:text-white flex items-center justify-between cursor-pointer transition-colors group"
                       >
-                        <span className="flex items-center gap-2">
-                          <span className="font-mono text-[10px] text-[rgb(99,142,255)]">0{idx + 1}</span>
-                          <span className="font-medium text-white/80">{srv.title}</span>
+                        <span className="flex items-center gap-2.5">
+                          <span className="font-mono text-[10px] text-[rgb(99,142,255)]">
+                            0{idx + 1}
+                          </span>
+                          <span className="font-medium text-white/90 group-hover:text-[rgb(99,142,255)] transition-colors">
+                            {srv.title}
+                          </span>
                         </span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-white/30" />
+                        <ArrowUpRight className="w-3.5 h-3.5 text-white/30 group-hover:text-[rgb(99,142,255)]" />
                       </button>
                     ))}
                   </div>
@@ -261,7 +292,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             ))}
 
-            <div className="pt-6 mt-2 space-y-4">
+            {/* Action CTA & Direct Contact Info */}
+            <div className="pt-6 space-y-4">
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
@@ -271,14 +303,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                     handleNavClick('/contact');
                   }
                 }}
-                className="w-full py-4 text-center text-xs font-semibold uppercase tracking-[0.16em] text-white bg-[rgb(99,142,255)]/20 hover:bg-[rgb(99,142,255)] hover:text-white border border-[rgb(99,142,255)]/40 rounded-full transition-all duration-300 shadow-[0_0_24px_rgba(99,142,255,0.3)] cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-4 text-center text-xs font-semibold uppercase tracking-[0.16em] text-white bg-[rgb(99,142,255)]/20 hover:bg-[rgb(99,142,255)] hover:text-white border border-[rgb(99,142,255)]/40 rounded-full transition-all duration-300 shadow-[0_0_24px_rgba(99,142,255,0.3)] cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 <span className="w-2 h-2 rounded-full bg-[rgb(99,142,255)] shadow-[0_0_8px_rgb(99,142,255)] animate-pulse" />
                 <span>Start a Project</span>
               </button>
-              
+
               <div className="text-center pt-2">
-                <p className="text-[11px] font-mono uppercase tracking-widest text-white/40 mb-1">Direct Inquiries</p>
+                <p className="text-[11px] font-mono uppercase tracking-widest text-white/40 mb-1">
+                  Direct Inquiries
+                </p>
                 <a
                   href="mailto:cretifyservices@gmail.com"
                   className="text-xs font-mono text-[rgb(99,142,255)] hover:underline transition-colors"
@@ -287,15 +321,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </a>
               </div>
             </div>
-          </div>
 
-          {/* Mobile Footer brand marker inside menu */}
-          <div className="px-6 py-4 border-t border-white/[0.06] bg-black/40 flex items-center justify-between text-[11px] font-mono text-white/40">
-            <span>© {new Date().getFullYear()} CRETIFY</span>
-            <span className="text-[rgb(99,142,255)]">COSMIC DIGITAL STUDIO</span>
+            {/* Mobile Footer brand info */}
+            <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-white/40">
+              <span>© {new Date().getFullYear()} CRETIFY</span>
+              <span className="text-[rgb(99,142,255)]">DIGITAL ARCHITECTURE</span>
+            </div>
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 };

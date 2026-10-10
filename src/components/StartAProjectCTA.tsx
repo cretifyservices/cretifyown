@@ -9,7 +9,7 @@ interface StartAProjectCTAProps {
 
 export const StartAProjectCTA: React.FC<StartAProjectCTAProps> = ({
   onStartProject,
-  title = 'Let’s build something beyond the dark.',
+  title = "Let's build something extraordinary together.",
   subtitle = 'hello@cretify.in',
 }) => {
   return (
@@ -46,7 +46,7 @@ export const StartAProjectCTA: React.FC<StartAProjectCTAProps> = ({
         />
       </div>
 
-      {/* 2. Exact Vesper Rotating Celestial Saturn System */}
+      {/* 2. Original Rotating Celestial Saturn System */}
       <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
         <div
           className="relative w-[240px] h-[240px]"
@@ -115,9 +115,8 @@ export const StartAProjectCTA: React.FC<StartAProjectCTAProps> = ({
         }}
       />
 
-      {/* 4. Foreground Content (Strict Vesper alignment) */}
+      {/* 4. Foreground Content */}
       <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center gap-6">
-        
         {/* Eyebrow */}
         <div className="flex items-center gap-2.5">
           <span className="w-1.5 h-1.5 rounded-full bg-[rgb(99,142,255)] shadow-[0_0_8px_rgb(99,142,255)]" />
@@ -145,9 +144,10 @@ export const StartAProjectCTA: React.FC<StartAProjectCTAProps> = ({
         <div className="pt-2">
           <a
             href="mailto:cretifyservices@gmail.com"
-            className="text-sm font-medium tracking-wide text-white/70 hover:text-white transition-colors"
+            className="text-sm font-medium tracking-wide text-white/70 hover:text-[rgb(99,142,255)] transition-colors flex items-center gap-1.5"
           >
-            cretifyservices@gmail.com
+            <span>cretifyservices@gmail.com</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </a>
         </div>
       </div>

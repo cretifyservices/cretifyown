@@ -108,10 +108,7 @@ export const ApproachScrollSaturn: React.FC = () => {
 
       <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
         
-        {/* ========================================================= */}
-        {/* 1. PERSISTENT APPROACH BADGE / TEXT                       */}
-        {/* Visible after capabilities every time, exactly as requested */}
-        {/* ========================================================= */}
+        {/* 1. PERSISTENT APPROACH BADGE / TEXT */}
         <div className="flex flex-col items-center mb-8 sm:mb-12">
           <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/[0.05] border border-white/12 shadow-[0_0_24px_rgba(99,142,255,0.25)] backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-[rgb(99,142,255)] shadow-[0_0_10px_rgb(99,142,255)] animate-pulse" />
@@ -121,10 +118,7 @@ export const ApproachScrollSaturn: React.FC = () => {
           </div>
         </div>
 
-        {/* ========================================================= */}
-        {/* 2. SATURN PLANET & ROTATING ORBITAL RINGS ANIMATION       */}
-        {/* Sweeps in from left on scroll entry, centers, exits up     */}
-        {/* ========================================================= */}
+        {/* 2. SATURN PLANET & ROTATING ORBITAL RINGS ANIMATION */}
         <div className="relative w-full flex items-center justify-center py-2 sm:py-6 overflow-visible pointer-events-none">
           <div
             className="transition-transform duration-75 will-change-transform flex items-center justify-center"
@@ -133,7 +127,7 @@ export const ApproachScrollSaturn: React.FC = () => {
               opacity: motion.saturnOpacity,
             }}
           >
-            {/* Responsive scaling: perfectly proportioned on both mobile and desktop */}
+            {/* Responsive scaling: proportioned on mobile and desktop */}
             <div className="block sm:hidden">
               <SaturnOrbital customScale={0.58} />
             </div>
@@ -146,10 +140,7 @@ export const ApproachScrollSaturn: React.FC = () => {
           </div>
         </div>
 
-        {/* ========================================================= */}
-        {/* 3. APPROACH HEADLINE & TEXT (100% COMPLETE & VISIBLE)     */}
-        {/* Fully legible, no overflow clipping, highlighted blue accent */}
-        {/* ========================================================= */}
+        {/* 3. APPROACH HEADLINE & TEXT */}
         <div
           className="relative text-center max-w-3xl flex flex-col items-center gap-3 sm:gap-4 mt-4 sm:mt-6 transition-transform duration-75 will-change-transform"
           style={{
