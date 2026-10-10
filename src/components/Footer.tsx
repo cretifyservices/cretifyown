@@ -143,16 +143,6 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
           <p>© {new Date().getFullYear()} CRETIFY. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <span>Crafted in the dark — worldwide.</span>
-            <a
-              href="/cretify-website.zip"
-              download="cretify-website.zip"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[rgb(99,142,255)]/80 hover:text-[rgb(99,142,255)] transition-colors underline flex items-center gap-1.5"
-              title="Download full project ZIP archive"
-            >
-              <span>Download ZIP (270 KB)</span>
-            </a>
           </div>
         </div>
       </div>

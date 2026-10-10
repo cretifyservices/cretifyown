@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StarryCosmicCanvas } from '../components/StarryCosmicCanvas';
+import { VerticalStone } from '../components/VerticalStone';
 import { ManifestoSection } from '../components/ManifestoSection';
 import { SelectedWorkSection } from '../components/SelectedWorkSection';
 import { CapabilitiesSection } from '../components/CapabilitiesSection';
@@ -90,7 +91,27 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-[rgb(99,142,255)]/10 blur-[140px] rounded-full pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-[280px] sm:w-[450px] h-[280px] sm:h-[450px] bg-[rgb(120,80,240)]/8 blur-[150px] rounded-full pointer-events-none" />
 
-        {/* Hero Central Content */}
+        {/* The Exact Vertical Chrome/Obsidian Stone Animation (Centered in background behind text as in Vesper reference) */}
+        <div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 transition-all duration-1000 ease-out"
+          style={{
+            opacity: mounted ? 1 : 0.001,
+            transform: mounted ? 'scale(1)' : 'scale(0.9)',
+            transitionDelay: '250ms',
+          }}
+        >
+          <div className="block sm:hidden">
+            <VerticalStone customScale={0.72} />
+          </div>
+          <div className="hidden sm:block md:hidden">
+            <VerticalStone customScale={0.88} />
+          </div>
+          <div className="hidden md:block">
+            <VerticalStone customScale={1.05} />
+          </div>
+        </div>
+
+        {/* Hero Central Content (z-10 overlaid on top of vertical stone) */}
         <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center gap-7 sm:gap-9">
           
           {/* Eyebrow Pill */}
@@ -108,16 +129,16 @@ export const HomePage: React.FC<HomePageProps> = ({
             </span>
           </div>
 
-          {/* Staggered Giant Headline */}
-          <h1 className="text-[44px] sm:text-7xl md:text-8xl lg:text-[104px] font-semibold tracking-[-0.03em] leading-[0.98] sm:leading-[0.94] text-white flex flex-wrap justify-center gap-x-3.5 sm:gap-x-6 gap-y-1 sm:gap-y-2 select-none">
+          {/* Calibrated Harmonic Headline */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[70px] font-semibold tracking-[-0.025em] leading-[1.08] sm:leading-[1.04] text-white flex flex-wrap justify-center gap-x-3 sm:gap-x-4 gap-y-1 select-none max-w-4xl">
             {heroHeadlineWords.map((word, i) => (
               <span
                 key={i}
                 className="transition-all duration-700 ease-out inline-block"
                 style={{
                   opacity: mounted ? 1 : 0.001,
-                  transform: mounted ? 'translateY(0)' : 'translateY(24px)',
-                  transitionDelay: `${350 + i * 80}ms`,
+                  transform: mounted ? 'translateY(0)' : 'translateY(20px)',
+                  transitionDelay: `${350 + i * 70}ms`,
                 }}
               >
                 {word}

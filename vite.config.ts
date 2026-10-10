@@ -9,19 +9,6 @@ export default defineConfig(() => {
     plugins: [
       react(),
       tailwindcss(),
-      {
-        name: 'zip-download-headers',
-        configureServer(server) {
-          server.middlewares.use((req, res, next) => {
-            if (req.url && req.url.startsWith('/cretify-website.zip')) {
-              res.setHeader('Content-Disposition', 'attachment; filename="cretify-website.zip"');
-              res.setHeader('Content-Type', 'application/zip');
-              res.setHeader('Access-Control-Allow-Origin', '*');
-            }
-            next();
-          });
-        },
-      },
     ],
     resolve: {
       alias: {

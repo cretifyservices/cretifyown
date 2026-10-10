@@ -10,7 +10,6 @@ import { ProcessPage } from './pages/ProcessPage';
 import { ContactPage } from './pages/ContactPage';
 import { AdminPage } from './pages/AdminPage';
 import { QuickContactModal } from './components/QuickContactModal';
-import { PreviewDownloadWidget } from './components/PreviewDownloadWidget';
 import { ServiceId } from './types';
 
 export default function App() {
@@ -169,9 +168,6 @@ export default function App() {
         onClose={() => setIsQuickContactOpen(false)}
         initialService={selectedContactService}
       />
-
-      {/* Download project source ZIP */}
-      <PreviewDownloadWidget />
     </div>
   );
 }

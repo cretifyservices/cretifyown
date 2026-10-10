@@ -69,6 +69,51 @@
   to { transform: rotate(-360deg); }
 }
 
+@keyframes verticalPebbleHover {
+  0% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  35% {
+    transform: translateY(-12px) rotate(0.8deg) scale(1.015);
+  }
+  70% {
+    transform: translateY(8px) rotate(-0.6deg) scale(0.99);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes pebbleSheenSweep {
+  0% {
+    transform: translateY(-120%) rotate(-25deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(120%) rotate(-25deg);
+    opacity: 0.9;
+  }
+  65% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(140%) rotate(-25deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pebbleGlintPulse {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
