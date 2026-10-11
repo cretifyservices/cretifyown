@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useProjects } from '../utils/dataStore';
 import { ProjectCard } from '../components/ProjectCard';
 import { StartAProjectCTA } from '../components/StartAProjectCTA';
@@ -9,28 +9,11 @@ interface WorkPageProps {
   onStartProject: () => void;
 }
 
-const CATEGORIES = [
-  'All',
-  'Websites',
-  'Web Applications',
-  'E-commerce',
-  'UI/UX',
-  'Branding',
-  'Video Editing',
-  'AI Automation',
-] as const;
-
 export const WorkPage: React.FC<WorkPageProps> = ({
   navigate,
   onStartProject,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const projects = useProjects();
-
-  const filteredProjects =
-    selectedCategory === 'All'
-      ? projects
-      : projects.filter((p) => p.category === selectedCategory);
 
   return (
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden pt-28 font-sans">
@@ -52,32 +35,12 @@ export const WorkPage: React.FC<WorkPageProps> = ({
         <p className="mt-6 text-[16px] sm:text-[18px] text-white/60 max-w-2xl mx-auto leading-relaxed font-normal">
           Explore our client systems and digital platforms. Direct links available to test and inspect live in your browser.
         </p>
-
-        {/* Filter Controls */}
-        <div className="mt-12 flex items-center justify-center flex-wrap gap-2 p-1.5 bg-white/[0.03] border border-white/10 rounded-2xl max-w-3xl mx-auto backdrop-blur-md">
-          {CATEGORIES.map((cat) => {
-            const isActive = selectedCategory === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 text-xs font-medium uppercase tracking-[0.1em] rounded-xl transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? 'bg-white text-black font-semibold shadow-sm'
-                    : 'text-white/60 hover:text-white hover:bg-white/[0.04]'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
       </section>
 
       {/* Projects Grid */}
-      <section className="py-12 px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
+      <section className="pb-24 px-5 sm:px-8 lg:px-12 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {filteredProjects.map((project, index) => (
+          {projects.map((project, index) => (
             <ProjectCard
               key={project.id}
               project={project}
@@ -86,9 +49,9 @@ export const WorkPage: React.FC<WorkPageProps> = ({
           ))}
         </div>
 
-        {filteredProjects.length === 0 && (
+        {projects.length === 0 && (
           <div className="py-20 text-center text-white/40 text-sm">
-            No projects in this category currently displayed.
+            No projects currently displayed.
           </div>
         )}
       </section>
