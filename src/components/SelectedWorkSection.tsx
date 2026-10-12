@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ProjectCard } from './ProjectCard';
-import { useProjects } from '../utils/dataStore';
+import { useProjectsData } from '../utils/dataStore';
 import { ArrowRight } from 'lucide-react';
 
 interface SelectedWorkSectionProps {
@@ -10,7 +10,7 @@ interface SelectedWorkSectionProps {
 export const SelectedWorkSection: React.FC<SelectedWorkSectionProps> = ({ navigate }) => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const projects = useProjects();
+  const { projects, loading } = useProjectsData();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -66,21 +66,34 @@ export const SelectedWorkSection: React.FC<SelectedWorkSectionProps> = ({ naviga
 
         {/* Selected Works Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {projects.slice(0, 6).map((project, index) => (
-            <div
-              key={project.id}
-              className="transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)"
-              style={{
-                transform: isVisible
-                  ? 'translate3d(0, 0, 0) scale(1) rotate(0deg)'
-                  : initialTransforms[index % initialTransforms.length],
-                opacity: isVisible ? 1 : 0,
-                transitionDelay: `${index * 80}ms`,
-              }}
-            >
-              <ProjectCard project={project} index={index} />
-            </div>
-          ))}
+          {loading && projects.length === 0 ? (
+            [1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-white/10 bg-[#121215] overflow-hidden p-6 animate-pulse"
+              >
+                <div className="w-full aspect-[16/10] bg-white/[0.04] rounded-xl mb-6" />
+                <div className="h-4 w-24 bg-white/[0.08] rounded mb-3" />
+                <div className="h-7 w-3/4 bg-white/[0.08] rounded mb-3" />
+              </div>
+            ))
+          ) : (
+            projects.slice(0, 6).map((project, index) => (
+              <div
+                key={project.id}
+                className="transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)"
+                style={{
+                  transform: isVisible
+                    ? 'translate3d(0, 0, 0) scale(1) rotate(0deg)'
+                    : initialTransforms[index % initialTransforms.length],
+                  opacity: isVisible ? 1 : 0,
+                  transitionDelay: `${index * 80}ms`,
+                }}
+              >
+                <ProjectCard project={project} index={index} />
+              </div>
+            ))
+          )}
         </div>
 
         {/* Show More Button Directing to Works Page */}

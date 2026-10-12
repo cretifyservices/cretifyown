@@ -13,6 +13,8 @@ import {
   exportAllData,
   importAllData,
   resetAllToDefaults,
+  setAdminToken,
+  removeAdminToken,
 } from '../utils/dataStore';
 import { ProjectItem, TestimonialItem, ServiceItem } from '../types';
 import {
@@ -70,12 +72,30 @@ const CATEGORIES = [
 export const AdminPage: React.FC<AdminPageProps> = ({ navigate }) => {
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return sessionStorage.getItem(SESSION_KEY) === 'granted';
+    return sessionStorage.getItem(SESSION_KEY) === 'granted' && !!sessionStorage.getItem('cretify_admin_token');
   });
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('cretify_admin_token');
+    if (isAuthenticated && token) {
+      fetch('/api/admin/verify', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.authenticated) {
+            sessionStorage.removeItem(SESSION_KEY);
+            removeAdminToken();
+            setIsAuthenticated(false);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isAuthenticated]);
 
   // Active Admin Tab
   const [activeTab, setActiveTab] = useState<'works' | 'reviews' | 'services' | 'sync'>('works');
@@ -118,14 +138,28 @@ export const AdminPage: React.FC<AdminPageProps> = ({ navigate }) => {
       const uHash = await hashSHA256(usernameInput.trim());
       const pHash = await hashSHA256(passwordInput.trim());
 
-      if (uHash === AUTH_USER_HASH && pHash === AUTH_PASS_HASH) {
+      // Authenticate with shared server backend
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: usernameInput.trim(),
+          password: passwordInput.trim(),
+          authUserHash: uHash,
+          authPassHash: pHash,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.token) {
         sessionStorage.setItem(SESSION_KEY, 'granted');
+        setAdminToken(data.token);
         setIsAuthenticated(true);
         setUsernameInput('');
         setPasswordInput('');
         showToast('Administrative session established');
       } else {
-        setLoginError('Invalid administrative credentials. Access denied.');
+        setLoginError(data.error || 'Invalid administrative credentials. Access denied.');
       }
     } catch (err) {
       setLoginError('Security verification failed. Please try again.');
@@ -136,6 +170,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ navigate }) => {
 
   const handleLogout = () => {
     sessionStorage.removeItem(SESSION_KEY);
+    removeAdminToken();
     setIsAuthenticated(false);
   };
 
@@ -166,7 +201,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ navigate }) => {
     setIsProjectModalOpen(true);
   };
 
-  const handleSaveProject = (e: React.FormEvent) => {
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProject) return;
 
@@ -177,21 +212,33 @@ export const AdminPage: React.FC<AdminPageProps> = ({ navigate }) => {
 
     const exists = projects.some((p) => p.id === editingProject.id);
     if (exists) {
-      updateProject(editingProject);
-      showToast(`Work "${editingProject.title}" updated successfully`);
+      const result = await updateProject(editingProject);
+      if (result.success) {
+        showToast(`Work "${editingProject.title}" updated successfully across all sessions`);
+      } else {
+        showToast(`Warning: ${result.error || 'Saved locally, server sync failed'}`);
+      }
     } else {
-      addProject(editingProject);
-      showToast(`New work "${editingProject.title}" added to portfolio`);
+      const result = await addProject(editingProject);
+      if (result.success) {
+        showToast(`New work "${editingProject.title}" published to portfolio`);
+      } else {
+        showToast(`Warning: ${result.error || 'Saved locally, server sync failed'}`);
+      }
     }
 
     setIsProjectModalOpen(false);
     setEditingProject(null);
   };
 
-  const handleDeleteProject = (id: string, title: string) => {
+  const handleDeleteProject = async (id: string, title: string) => {
     if (window.confirm(`Are you sure you want to remove "${title}" from the portfolio?`)) {
-      deleteProject(id);
-      showToast(`Work "${title}" removed`);
+      const result = await deleteProject(id);
+      if (result.success) {
+        showToast(`Work "${title}" removed from all devices`);
+      } else {
+        showToast(`Warning: ${result.error || 'Removed locally'}`);
+      }
     }
   };
 
@@ -335,12 +382,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ navigate }) => {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       const content = event.target?.result as string;
-      if (content && importAllData(content)) {
-        showToast('All portfolio, reviews & services successfully imported!');
-      } else {
-        alert('Invalid JSON file format. Import failed.');
+      if (content) {
+        const success = await importAllData(content);
+        if (success) {
+          showToast('All portfolio, reviews & services successfully imported!');
+        } else {
+          alert('Invalid JSON file format. Import failed.');
+        }
       }
     };
     reader.readAsText(file);
